@@ -26,8 +26,9 @@ TideCurrentDataSet.Add(default_tcdata1);
 ```
 ________________________________
 
-now you can use all filenames and  multiple selection
--
+i modified the plugin, you can use all filenames and  multiple selection
+some features will follow...
+
 
 <img width="1880" height="983" alt="nordsee" src="https://github.com/user-attachments/assets/75fe95a0-d8d5-4095-81b4-15bfac0c3ee1" />
 
