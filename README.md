@@ -6,9 +6,10 @@ this plugin based on "otcurrent v.4.6.5" from Mike Rossiter find here:
 https://github.com/Rasbats/otcurrent_pi
 
 reason for modification:
+
 the original plugin only allow the hardcoded filenames harmonics-dwf-20210110-free.tcd and  HARMONIC.IDX
 and more then one files are not possible.
-
+-
 hardcoded details:
  src\otcurrentUIDialogBase.cpp in line 219 and 220 you find something like this:
 in https://github.com/Rasbats/otcurrent_pi/blob/master/src/otcurrentUIDialog.cpp   line 219 and 220 you find something like this:
