@@ -11,6 +11,7 @@ and more then one files are not possible.
 hardcoded details:
  src\otcurrentUIDialogBase.cpp in line 219 and 220 you find something like this:
 _______________________________
+```
 void otcurrentUIDialog::LoadTCMFile() {
 wxString TCDir = m_FolderSelected;
 TCDir.Append(wxFileName::GetPathSeparator());
@@ -22,6 +23,7 @@ wxString default_tcdata1 = TCDir + _T("HARMONIC.IDX");
 // if (!TideCurrentDataSet.GetCount()) {
 TideCurrentDataSet.Add(default_tcdata0);
 TideCurrentDataSet.Add(default_tcdata1);
+```
 ________________________________
 
 now you can use all filenames and  multiple selection
