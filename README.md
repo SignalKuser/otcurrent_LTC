@@ -9,7 +9,7 @@ the original plugin only allow the hardcoded filenames harmonics-dwf-20210110-fr
 and more then one files are not possible.
 -
 hardcoded details:
- src\otcurrentUIDialogBase.cpp in line 219 and 220 you find something like this:
+in https://github.com/Rasbats/otcurrent_pi/blob/master/src/otcurrentUIDialog.cpp   line 219 and 220 you find something like this:
 _______________________________
 ```
 void otcurrentUIDialog::LoadTCMFile() {
