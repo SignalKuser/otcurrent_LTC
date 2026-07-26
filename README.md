@@ -1,7 +1,7 @@
 
 # otcurrent_LTC_V.2.20
 modified opencpn plugin
-
+-
 this plugin based on "otcurrent v.4.6.5" from Mike Rossiter find here:
 https://github.com/Rasbats/otcurrent_pi
 
