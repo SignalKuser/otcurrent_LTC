@@ -38,11 +38,11 @@ void initialize_images(void)
 #ifdef ocpnUSE_SVG
     wxFileName fn;
 	wxString tmp_path;
-	
-	tmp_path = GetPluginDataDir("otcurrent_pi");
+
+	tmp_path = GetPluginDataDir("otcurrent_ltc_pi");
 	fn.SetPath(tmp_path);
-	fn.AppendDir(_T("data"));	
-	
+	fn.AppendDir(_T("data"));
+
     fn.SetFullName(_T("otcurrent_pi.svg"));
     _svg_otcurrent = fn.GetFullPath();
     fn.SetFullName(_T("otcurrent_pi_toggled.svg"));

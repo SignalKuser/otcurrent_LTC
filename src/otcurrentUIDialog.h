@@ -139,6 +139,7 @@ public:
   bool onPrev;
 
   wxString m_FolderSelected;
+  wxString m_TcdSelectionSetting;
   TCMgr* ptcmgr;
   int m_IntervalSelected;
 

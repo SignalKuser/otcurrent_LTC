@@ -212,3 +212,31 @@ Closes: #593
   18.08 is available, will be removed in next release.
 * git-push key files default location is moved from ci/ to build-deps/.
 * A new script update-templates supporting templates update is added.
+## otcurrent_LTC_V.2.2
+
+- Correct the OpenCPN package identity and bump the version so cached 2.1
+  import metadata cannot be reused.
+- Make the package/catalog name exactly match the OpenCPN common name.
+- Remove obsolete 2.0 and 2.1 local import metadata with the cleanup helper.
+
+## otcurrent_LTC_V.2.1
+
+- Use the LTC name and version consistently in OpenCPN and the plugin package.
+- Make the package/catalog name exactly match the OpenCPN common name so a
+  manually imported plugin remains visible after it has been disabled.
+- Add a PowerShell helper which removes the obsolete `otcurrent_ltc` import
+  metadata and its invalid Cloudsmith link.
+- Credit the original author and the LTC modification in the Help dialog.
+
+## otcurrent v2.0
+
+- Load every `.tcd` file from the selected Tide/Current data directory,
+  independent of its filename.
+- Keep optional legacy `HARMONIC.IDX` loading.
+- Clear the previous source list before rescanning a changed directory.
+- Log every detected data source and warn when the selected directory contains
+  no supported data.
+- Use a distinct LTC package identity and configuration section.
+- Add a persistent multi-selection dialog for TCD files in the chosen folder.
+- Make the path display read-only and label the single folder/file selection
+  clearly to avoid mistaking it for two independent data paths.

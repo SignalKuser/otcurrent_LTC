@@ -48,6 +48,8 @@
 #include <memory.h>
 
 #include <wx/colordlg.h>
+#include <wx/choicdlg.h>
+#include <wx/tokenzr.h>
 #include "otcurrent_pi.h"
 #include "qtstylesheet.h"
 
@@ -77,6 +79,36 @@ static wxString TToString(const wxDateTime date_time, const int time_zone) {
   }
 }
 
+static wxArrayString FindTcdFiles(const wxString& folder) {
+  wxArrayString files;
+  wxDir data_dir(folder);
+  if (!data_dir.IsOpened()) return files;
+
+  wxString file_name;
+  bool found = data_dir.GetFirst(&file_name, wxEmptyString, wxDIR_FILES);
+  while (found) {
+    wxFileName file_path(folder, file_name);
+    if (file_path.GetExt().CmpNoCase(_T("tcd")) == 0)
+      files.Add(file_name);
+    found = data_dir.GetNext(&file_name);
+  }
+
+  files.Sort();
+  return files;
+}
+
+static bool SelectionContains(const wxString& setting,
+                              const wxString& file_name) {
+  if (setting == _T("*")) return true;
+  if (setting == _T("!")) return false;
+
+  wxStringTokenizer tokenizer(setting, _T(";"));
+  while (tokenizer.HasMoreTokens()) {
+    if (tokenizer.GetNextToken().CmpNoCase(file_name) == 0) return true;
+  }
+  return false;
+}
+
 #if !wxCHECK_VERSION(2, 9, 4) /* to work with wx 2.8 */
 #define SetBitmap SetBitmapLabel
 #endif
@@ -92,19 +124,20 @@ otcurrentUIDialog::otcurrentUIDialog(wxWindow* parent, otcurrent_pi* ppi)
 
   g_Window = this;
   GetHandle()->setStyleSheet(qtStyleSheet);
-  
+
   Connect(wxEVT_MOTION, wxMouseEventHandler(otcurrentUIDialog::OnMouseEvent));
 
 #endif
 
   if (pConf) {
-    pConf->SetPath(_T ( "/PlugIns/otcurrent_pi" ));
+    pConf->SetPath(_T ( "/PlugIns/otcurrent_ltc_pi" ));
 
     pConf->Read(_T ( "otcurrentUseRate" ), &m_bUseRate);
     pConf->Read(_T ( "otcurrentUseDirection" ), &m_bUseDirection);
     pConf->Read(_T("otcurrentUseHighResolution"), &m_bUseHighRes);
     pConf->Read(_T ( "otcurrentUseFillColour" ), &m_bUseFillColour);
     pConf->Read("otcurrentArrowScale", &m_arrow_scale);
+    pConf->Read(_T("otcurrentTcdFiles"), &m_TcdSelectionSetting, _T("*"));
 
     pConf->Read(_T("VColour0"), &myVColour[0], myVColour[0]);
     pConf->Read(_T("VColour1"), &myVColour[1], myVColour[1]);
@@ -212,30 +245,67 @@ void otcurrentUIDialog::LoadHarmonics() {
 }
 
 void otcurrentUIDialog::LoadTCMFile() {
-  wxString TCDir = m_FolderSelected;
-  TCDir.Append(wxFileName::GetPathSeparator());
-  wxLogMessage(_("Using Tide/Current data from:  ") + TCDir);
+  TideCurrentDataSet.Clear();
 
-  wxString default_tcdata0 = TCDir + _T("harmonics-dwf-20210110-free.tcd");
-  wxString default_tcdata1 = TCDir + _T("HARMONIC.IDX");
+  wxDir data_dir(m_FolderSelected);
+  if (!data_dir.IsOpened()) {
+    wxLogWarning(_("Cannot open Tide/Current data directory:  ") +
+                 m_FolderSelected);
+    return;
+  }
 
-  // if (!TideCurrentDataSet.GetCount()) {
-  TideCurrentDataSet.Add(default_tcdata0);
-  TideCurrentDataSet.Add(default_tcdata1);
-  //}
+  wxArrayString tcd_files = FindTcdFiles(m_FolderSelected);
+  wxString harmonic_idx;
+  wxString file_name;
+  bool found =
+      data_dir.GetFirst(&file_name, wxEmptyString, wxDIR_FILES);
+
+  while (found) {
+    wxFileName file_path(m_FolderSelected, file_name);
+
+    if (file_name.CmpNoCase(_T("HARMONIC.IDX")) == 0) {
+      harmonic_idx = file_path.GetFullPath();
+    }
+
+    found = data_dir.GetNext(&file_name);
+  }
+
+  for (unsigned int i = 0; i < tcd_files.GetCount(); i++) {
+    if (!SelectionContains(m_TcdSelectionSetting, tcd_files[i])) continue;
+    wxString full_path =
+        wxFileName(m_FolderSelected, tcd_files[i]).GetFullPath();
+    TideCurrentDataSet.Add(full_path);
+    wxLogMessage(_("Using TCD Tide/Current data:  ") + full_path);
+  }
+
+  if (!harmonic_idx.IsEmpty()) {
+    TideCurrentDataSet.Add(harmonic_idx);
+    wxLogMessage(_("Using legacy Tide/Current data:  ") + harmonic_idx);
+  }
+
+  if (TideCurrentDataSet.IsEmpty()) {
+    wxLogWarning(_("No .tcd or HARMONIC.IDX Tide/Current data found in:  ") +
+                 m_FolderSelected);
+  } else {
+    wxLogMessage(wxString::Format(
+        _("Loaded %u Tide/Current data source(s) from:  "),
+        static_cast<unsigned int>(TideCurrentDataSet.GetCount())) +
+                 m_FolderSelected);
+  }
 }
 
 otcurrentUIDialog::~otcurrentUIDialog() {
   wxFileConfig* pConf = GetOCPNConfigObject();
 
   if (pConf) {
-    pConf->SetPath(_T ( "/PlugIns/otcurrent_pi" ));
+    pConf->SetPath(_T ( "/PlugIns/otcurrent_ltc_pi" ));
 
     pConf->Write(_T ( "otcurrentUseRate" ), m_bUseRate);
     pConf->Write(_T ( "otcurrentUseDirection" ), m_bUseDirection);
     pConf->Write(_T("otcurrentUseHighResolution"), m_bUseHighRes);
     pConf->Write(_T ( "otcurrentUseFillColour" ), m_bUseFillColour);
     pConf->Write("otcurrentArrowScale", m_arrow_scale);
+    pConf->Write(_T("otcurrentTcdFiles"), m_TcdSelectionSetting);
 
     pConf->Write(_T("VColour0"), myVColour[0]);
     pConf->Write(_T("VColour1"), myVColour[1]);
@@ -342,12 +412,16 @@ void otcurrentUIDialog::OnPreferences(wxCommandEvent& event) {
 
 void otcurrentUIDialog::OnSelectData(wxCommandEvent& event) {
 #ifndef __OCPN__ANDROID__
-  wxDirDialog* d =
-      new wxDirDialog(this, _("Choose a directory"), "", 0, wxDefaultPosition);
-  if (d->ShowModal() == wxID_OK) {
-    m_dirPicker1->SetValue(d->GetPath());
-    m_FolderSelected = m_dirPicker1->GetValue();
+  wxDirDialog directory_dialog(this, _("Choose a Tide/Current data directory"),
+                               m_FolderSelected, 0, wxDefaultPosition);
+  if (directory_dialog.ShowModal() == wxID_OK) {
+    const wxString previous_folder = m_FolderSelected;
+    m_FolderSelected = directory_dialog.GetPath();
+    m_dirPicker1->SetValue(m_FolderSelected);
     pPlugIn->m_CopyFolderSelected = m_FolderSelected;
+    if (previous_folder != m_FolderSelected) m_TcdSelectionSetting = _T("*");
+  } else {
+    return;
   }
 #else
   wxString tc =
@@ -356,6 +430,42 @@ void otcurrentUIDialog::OnSelectData(wxCommandEvent& event) {
   m_FolderSelected = tc;
   pPlugIn->m_CopyFolderSelected = m_FolderSelected;
 #endif
+
+  wxArrayString tcd_files = FindTcdFiles(m_FolderSelected);
+  if (tcd_files.GetCount() != 0) {
+    wxMultiChoiceDialog file_dialog(
+        this,
+        _("Select one or more TCD files. Avoid overlapping regions unless "
+          "duplicate arrows are intended."),
+        _("otcurrent_LTC_V.2.2 - TCD files"), tcd_files);
+
+    wxArrayInt current_selections;
+    for (unsigned int i = 0; i < tcd_files.GetCount(); i++) {
+      if (SelectionContains(m_TcdSelectionSetting, tcd_files[i]))
+        current_selections.Add(static_cast<int>(i));
+    }
+    file_dialog.SetSelections(current_selections);
+
+    if (file_dialog.ShowModal() != wxID_OK) return;
+
+    wxArrayInt selections = file_dialog.GetSelections();
+    if (selections.GetCount() == 0) {
+      m_TcdSelectionSetting = _T("!");
+    } else {
+      m_TcdSelectionSetting.Clear();
+      for (unsigned int i = 0; i < selections.GetCount(); i++) {
+        if (!m_TcdSelectionSetting.IsEmpty())
+          m_TcdSelectionSetting.Append(_T(";"));
+        m_TcdSelectionSetting.Append(tcd_files[selections[i]]);
+      }
+    }
+  } else {
+    m_TcdSelectionSetting = _T("!");
+    wxMessageBox(
+        _("No TCD files were found in the selected directory. An optional "
+          "HARMONIC.IDX file will still be loaded when present."),
+        _("otcurrent_LTC_V.2.2"), wxOK | wxICON_INFORMATION, this);
+  }
 
   LoadTCMFile();
   LoadHarmonics();
@@ -474,7 +584,10 @@ void otcurrentUIDialog::About(wxCommandEvent& event) {
                  "Diamonds\n\n-------------------------------------------------"
                  "-------------------\n\nNote: 1 Rates shown are for a "
                  "position corresponding to the centre\nof the base of the "
-                 "arrow. Tidal rate is shown as knots.\n\n"),
+                 "arrow. Tidal rate is shown as knots.\n\n"
+                 "Original Plugin by Mike Rossiter\n"
+                 "modified by Christian Streicher , Christian Streicher@ "
+                 "facebook\n"),
                _("About Tidal Arrows"), wxOK | wxICON_INFORMATION, this);
 }
 

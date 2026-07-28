@@ -65,7 +65,7 @@ public:
   wxButton* m_button8;
 
   otcurrentUIDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                        const wxString& title = _("               otcurrent"),
+                        const wxString& title = _("otcurrent_LTC_V.2.2"),
                         const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);

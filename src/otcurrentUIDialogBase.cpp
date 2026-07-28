@@ -78,19 +78,23 @@ otcurrentUIDialogBase::otcurrentUIDialogBase(wxWindow* parent, wxWindowID id,
 
   wxStaticBoxSizer* sbSizerFolder;
   sbSizerFolder = new wxStaticBoxSizer(
-      new wxStaticBox(this, wxID_ANY, _("Tidal Data Folder")), wxVERTICAL);
+      new wxStaticBox(this, wxID_ANY, _("Tide/Current data source")),
+      wxVERTICAL);
 
   m_dirPicker1 =
       new wxTextCtrl(sbSizerFolder->GetStaticBox(), wxID_ANY, wxEmptyString,
-                     wxDefaultPosition, wxDefaultSize, 0);
+                     wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+  m_dirPicker1->SetToolTip(
+      _("Currently selected directory. Use the button below to change the "
+        "directory and select its TCD files."));
   sbSizerFolder->Add(m_dirPicker1, 0, wxALL | wxEXPAND, 5);
 
   wxBoxSizer* bSizer5;
   bSizer5 = new wxBoxSizer(wxHORIZONTAL);
 
   m_button2 = new wxButton(sbSizerFolder->GetStaticBox(), wxID_ANY,
-                           _("Select tidal current data"), wxDefaultPosition,
-                           wxDefaultSize, 0);
+                           _("Select folder and TCD files..."),
+                           wxDefaultPosition, wxDefaultSize, 0);
   bSizer5->Add(m_button2, 0, wxALL, 5);
 
   m_button8 =

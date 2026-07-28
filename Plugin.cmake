@@ -31,16 +31,18 @@ set(OCPN_RELEASE_REPO
 #
 # -------  Plugin setup --------
 #
-set(PKG_NAME otcurrent_pi)
-set(PKG_VERSION  4.6.5)
+set(PKG_NAME otcurrent_ltc_pi)
+set(PKG_VERSION  2.2.0)
 set(PKG_PRERELEASE "")  # Empty, or a tag like 'beta'
 
-set(DISPLAY_NAME otcurrent)    # Dialogs, installer artifacts, ...
-set(PLUGIN_API_NAME otcurrent) # As of GetCommonName() in plugin API
-set(PKG_SUMMARY "Predict future tidal currents")
+set(DISPLAY_NAME "otcurrent_LTC_V.2.2")  # Dialogs, installer artifacts, ...
+# OpenCPN requires the catalog/XML name to match GetCommonName() exactly.
+# A different value makes an imported plugin disappear after disabling it.
+set(PLUGIN_API_NAME "otcurrent_LTC_V.2.2")
+set(PKG_SUMMARY "Tidal-current predictions from arbitrary TCD filenames")
 set(PKG_DESCRIPTION [=[
-Allows predictions of future tidal currents, based on the harmonics data in
-OpenCPN.
+otcurrent_LTC_V.2.2. Allows predictions of future tidal currents and loads
+all TCD files from the selected data directory, independent of filename.
 ]=])
 
 set(PKG_AUTHOR "Mike Rossiter")

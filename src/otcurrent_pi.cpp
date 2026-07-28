@@ -85,9 +85,9 @@ otcurrent_pi::otcurrent_pi(void *ppimgr) : opencpn_plugin_118(ppimgr) {
 
   m_bShowotcurrent = false;
 
-  
+
   g_pi = this;
-  
+
 }
 
 
@@ -98,7 +98,7 @@ otcurrent_pi::~otcurrent_pi(void) {
 }
 
 int otcurrent_pi::Init(void) {
-  AddLocaleCatalog(_T("opencpn-otcurrent_pi"));
+  AddLocaleCatalog(_T("opencpn-otcurrent_ltc_pi"));
 
   // Set some default private member parameters
   m_otcurrent_dialog_x = 40;
@@ -184,7 +184,9 @@ const char* otcurrent_pi::GetPlugInVersionPre() { return PKG_PRERELEASE; }
 const char* otcurrent_pi::GetPlugInVersionBuild() { return PKG_BUILD_INFO; }
 wxBitmap *otcurrent_pi::GetPlugInBitmap() { return &m_panel_bitmap; }
 
-wxString otcurrent_pi::GetCommonName() { return PLUGIN_API_NAME; }
+wxString otcurrent_pi::GetCommonName() {
+  return _T("otcurrent_LTC_V.2.2");
+}
 
 wxString otcurrent_pi::GetShortDescription() { return PKG_SUMMARY; }
 
@@ -397,7 +399,7 @@ bool otcurrent_pi::LoadConfig(void) {
 
   if (!pConf) return false;
 
-  pConf->SetPath(_T( "/PlugIns/otcurrent_pi" ));
+  pConf->SetPath(_T( "/PlugIns/otcurrent_ltc_pi" ));
 
   m_bCopyUseRate = pConf->Read(_T( "otcurrentUseRate" ), 1);
   m_bCopyUseDirection = pConf->Read(_T( "otcurrentUseDirection" ), 1);
@@ -434,7 +436,7 @@ bool otcurrent_pi::SaveConfig(void) {
   wxFileConfig *pConf = (wxFileConfig *)m_pconfig;
 
   if (pConf) {
-    pConf->SetPath("/PlugIns/otcurrent_pi");
+    pConf->SetPath("/PlugIns/otcurrent_ltc_pi");
     pConf->Write(_T( "otcurrentUseRate" ), m_bCopyUseRate);
     pConf->Write(_T( "otcurrentUseDirection" ), m_bCopyUseDirection);
     pConf->Write(_T("otcurrentUseHighResolution"), m_bCopyUseHighRes);

@@ -1,39 +1,12 @@
 
-# otcurrent_LTC_V.2.20
-modified opencpn plugin
--
-this plugin based on "otcurrent v.4.6.5" from Mike Rossiter find here:
-https://github.com/Rasbats/otcurrent_pi
+otcurrent_LTC_V.2.2 for OpenCPN
+===============================
 
-reason for modification:
+This plugin uses the alternative managed workflow.
 
-the original plugin only allow the hardcoded filenames harmonics-dwf-20210110-free.tcd and  HARMONIC.IDX
-and more then one files are not possible.
--
-hardcoded details:
- src\otcurrentUIDialogBase.cpp in line 219 and 220 you find something like this:
-in https://github.com/Rasbats/otcurrent_pi/blob/master/src/otcurrentUIDialog.cpp   line 219 and 220 you find something like this:
-_______________________________
-```
-void otcurrentUIDialog::LoadTCMFile() {
-wxString TCDir = m_FolderSelected;
-TCDir.Append(wxFileName::GetPathSeparator());
-wxLogMessage(_("Using Tide/Current data from: ") + TCDir);
-
-wxString default_tcdata0 = TCDir + _T("harmonics-dwf-20210110-free.tcd");
-wxString default_tcdata1 = TCDir + _T("HARMONIC.IDX");
-
-// if (!TideCurrentDataSet.GetCount()) {
-TideCurrentDataSet.Add(default_tcdata0);
-TideCurrentDataSet.Add(default_tcdata1);
-```
-________________________________
-i modified the code,
-now you can use all filenames and  multiple selection
-Some additional functions will be available shortly.
-
-<img width="1880" height="983" alt="nordsee" src="https://github.com/user-attachments/assets/75fe95a0-d8d5-4095-81b4-15bfac0c3ee1" />
-
+The package/catalog name and the plugin common name intentionally use the
+same value, `otcurrent_LTC_V.2.2`. OpenCPN requires this exact match for
+reliable activation and deactivation of manually imported packages.
 
 License
 -------
@@ -41,4 +14,8 @@ The plugin code is licensed under the terms of the GPL v2.
 
 Acknowledgements
 ----------------
-The author wishes to thank Dave Register and Mike Rossiter for providing OpenCPN, Otcurrent ect.
+The author wishes to thank Dave Register for providing OpenCPN, from which this plugin was derived.
+
+Original Plugin by Mike Rossiter
+
+modified by Christian Streicher, Christian Streicher@ facebook
