@@ -1,3 +1,5 @@
+<img width="1897" height="919" alt="Screenshot 2026-08-09 172107" src="https://github.com/user-attachments/assets/e6664a01-1e75-45d5-8144-4800aadfe16f" />
+<img width="1897" height="919" alt="Screenshot 2026-08-09 172107" src="https://github.com/user-attachments/assets/6c8716d8-982f-45c0-8751-bc0f535b5b3a" />
 
 # otcurrent_LTC_V.2.20
 modified opencpn plugin  (multiselect / all filenames)
@@ -37,7 +39,8 @@ Some additional functions will be available shortly.
 # otcurrent_LTC_V.2.5
 can now handle IDX, tcd or both.
 -
-<img width="1905" height="997" alt="Screenshot 2026-08-09 153441" src="https://github.com/user-attachments/assets/6356f3ef-db1b-4bf4-b257-6811829e8c4d" />
+
+<img width="1897" height="919" alt="Screenshot 2026-08-09 172107" src="https://github.com/user-attachments/assets/24487eff-0422-4e30-b737-b9a8ed5777e3" />
 
 
 License
