@@ -1,5 +1,3 @@
-<img width="1897" height="919" alt="Screenshot 2026-08-09 172107" src="https://github.com/user-attachments/assets/e6664a01-1e75-45d5-8144-4800aadfe16f" />
-<img width="1897" height="919" alt="Screenshot 2026-08-09 172107" src="https://github.com/user-attachments/assets/6c8716d8-982f-45c0-8751-bc0f535b5b3a" />
 
 # otcurrent_LTC_V.2.20
 modified opencpn plugin  (multiselect / all filenames)
