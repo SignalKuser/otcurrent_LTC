@@ -34,6 +34,11 @@ Some additional functions will be available shortly.
 
 <img width="1880" height="983" alt="nordsee" src="https://github.com/user-attachments/assets/75fe95a0-d8d5-4095-81b4-15bfac0c3ee1" />
 
+# otcurrent_LTC_V.2.4
+can now handle IDX, tcd or both.
+-
+<img width="1905" height="997" alt="Screenshot 2026-08-09 153441" src="https://github.com/user-attachments/assets/6356f3ef-db1b-4bf4-b257-6811829e8c4d" />
+
 
 License
 -------
