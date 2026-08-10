@@ -140,6 +140,7 @@ public:
 
   wxString m_FolderSelected;
   wxString m_TcdSelectionSetting;
+  int m_SourceMode;
   TCMgr* ptcmgr;
   int m_IntervalSelected;
 
@@ -149,6 +150,7 @@ public:
   void OnPreferences(wxCommandEvent& event);
   void OnCalendarShow(wxCommandEvent& event);
   void OnSelectData(wxCommandEvent& event);
+  void OnSourceMode(wxCommandEvent& event);
   void OnSelectInterval(wxCommandEvent& event);
   void OnNow(wxCommandEvent& event);
   wxString MakeDateTimeLabel(wxDateTime myDateTime);

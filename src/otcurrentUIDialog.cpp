@@ -97,6 +97,42 @@ static wxArrayString FindTcdFiles(const wxString& folder) {
   return files;
 }
 
+static bool ArrayContainsNoCase(const wxArrayString& values,
+                                const wxString& value) {
+  for (unsigned int i = 0; i < values.GetCount(); i++) {
+    if (values[i].CmpNoCase(value) == 0) return true;
+  }
+  return false;
+}
+
+static wxArrayString FindOpenCpnIdxSources() {
+  wxArrayString files;
+  wxFileConfig* config = GetOCPNConfigObject();
+  if (!config) return files;
+
+  const wxString previous_path = config->GetPath();
+  config->SetPath(_T("/TideCurrentDataSources"));
+
+  wxString entry_name;
+  long cookie = 0;
+  bool found = config->GetFirstEntry(entry_name, cookie);
+  while (found) {
+    wxString source_path;
+    if (config->Read(entry_name, &source_path)) {
+      wxFileName source(source_path);
+      if (source.GetExt().CmpNoCase(_T("idx")) == 0 &&
+          source.FileExists() && !ArrayContainsNoCase(files, source_path)) {
+        files.Add(source_path);
+      }
+    }
+    found = config->GetNextEntry(entry_name, cookie);
+  }
+
+  config->SetPath(previous_path);
+  files.Sort();
+  return files;
+}
+
 static bool SelectionContains(const wxString& setting,
                               const wxString& file_name) {
   if (setting == _T("*")) return true;
@@ -114,7 +150,7 @@ static bool SelectionContains(const wxString& setting,
 #endif
 
 otcurrentUIDialog::otcurrentUIDialog(wxWindow* parent, otcurrent_pi* ppi)
-    : otcurrentUIDialogBase(parent), ptcmgr(0), m_vp(0) {
+    : otcurrentUIDialogBase(parent), ptcmgr(0), m_SourceMode(0), m_vp(0) {
   this->Fit();
   pParent = parent;
   pPlugIn = ppi;
@@ -124,7 +160,7 @@ otcurrentUIDialog::otcurrentUIDialog(wxWindow* parent, otcurrent_pi* ppi)
 
   g_Window = this;
   GetHandle()->setStyleSheet(qtStyleSheet);
-
+  
   Connect(wxEVT_MOTION, wxMouseEventHandler(otcurrentUIDialog::OnMouseEvent));
 
 #endif
@@ -138,6 +174,7 @@ otcurrentUIDialog::otcurrentUIDialog(wxWindow* parent, otcurrent_pi* ppi)
     pConf->Read(_T ( "otcurrentUseFillColour" ), &m_bUseFillColour);
     pConf->Read("otcurrentArrowScale", &m_arrow_scale);
     pConf->Read(_T("otcurrentTcdFiles"), &m_TcdSelectionSetting, _T("*"));
+    pConf->Read(_T("otcurrentSourceMode"), &m_SourceMode, 0);
 
     pConf->Read(_T("VColour0"), &myVColour[0], myVColour[0]);
     pConf->Read(_T("VColour1"), &myVColour[1], myVColour[1]);
@@ -165,6 +202,11 @@ otcurrentUIDialog::otcurrentUIDialog(wxWindow* parent, otcurrent_pi* ppi)
   m_FolderSelected = pPlugIn->GetFolderSelected();
 
   m_dirPicker1->SetValue(m_FolderSelected);
+  if (m_SourceMode < 0 || m_SourceMode > 2) m_SourceMode = 0;
+  m_sourceModeChoice->SetSelection(m_SourceMode);
+  const bool tcd_mode = m_SourceMode != 0;
+  m_dirPicker1->Enable(tcd_mode);
+  m_button2->Enable(tcd_mode);
   m_choice1->SetSelection(m_IntervalSelected);
 
   LoadTCMFile();
@@ -247,45 +289,41 @@ void otcurrentUIDialog::LoadHarmonics() {
 void otcurrentUIDialog::LoadTCMFile() {
   TideCurrentDataSet.Clear();
 
-  wxDir data_dir(m_FolderSelected);
-  if (!data_dir.IsOpened()) {
-    wxLogWarning(_("Cannot open Tide/Current data directory:  ") +
-                 m_FolderSelected);
-    return;
-  }
-
-  wxArrayString tcd_files = FindTcdFiles(m_FolderSelected);
-  wxString harmonic_idx;
-  wxString file_name;
-  bool found =
-      data_dir.GetFirst(&file_name, wxEmptyString, wxDIR_FILES);
-
-  while (found) {
-    wxFileName file_path(m_FolderSelected, file_name);
-
-    if (file_name.CmpNoCase(_T("HARMONIC.IDX")) == 0) {
-      harmonic_idx = file_path.GetFullPath();
+  if (m_SourceMode == 0 || m_SourceMode == 2) {
+    wxArrayString opencpn_idx_sources = FindOpenCpnIdxSources();
+    for (unsigned int i = 0; i < opencpn_idx_sources.GetCount(); i++) {
+      TideCurrentDataSet.Add(opencpn_idx_sources[i]);
+      wxLogMessage(_("Using OpenCPN IDX Tide/Current data:  ") +
+                   opencpn_idx_sources[i]);
     }
-
-    found = data_dir.GetNext(&file_name);
   }
 
-  for (unsigned int i = 0; i < tcd_files.GetCount(); i++) {
-    if (!SelectionContains(m_TcdSelectionSetting, tcd_files[i])) continue;
-    wxString full_path =
-        wxFileName(m_FolderSelected, tcd_files[i]).GetFullPath();
-    TideCurrentDataSet.Add(full_path);
-    wxLogMessage(_("Using TCD Tide/Current data:  ") + full_path);
-  }
-
-  if (!harmonic_idx.IsEmpty()) {
-    TideCurrentDataSet.Add(harmonic_idx);
-    wxLogMessage(_("Using legacy Tide/Current data:  ") + harmonic_idx);
+  if (m_SourceMode == 1 || m_SourceMode == 2) {
+    wxDir data_dir(m_FolderSelected);
+    if (!data_dir.IsOpened()) {
+      wxLogWarning(_("Cannot open Tide/Current data directory:  ") +
+                   m_FolderSelected);
+    } else {
+      wxArrayString tcd_files = FindTcdFiles(m_FolderSelected);
+      for (unsigned int i = 0; i < tcd_files.GetCount(); i++) {
+        if (!SelectionContains(m_TcdSelectionSetting, tcd_files[i])) continue;
+        wxString full_path =
+            wxFileName(m_FolderSelected, tcd_files[i]).GetFullPath();
+        TideCurrentDataSet.Add(full_path);
+        wxLogMessage(_("Using TCD Tide/Current data:  ") + full_path);
+      }
+    }
   }
 
   if (TideCurrentDataSet.IsEmpty()) {
-    wxLogWarning(_("No .tcd or HARMONIC.IDX Tide/Current data found in:  ") +
-                 m_FolderSelected);
+    wxString warning;
+    if (m_SourceMode == 0)
+      warning = _("No existing IDX sources are configured in OpenCPN.");
+    else if (m_SourceMode == 1)
+      warning = _("No TCD files are selected in the plugin.");
+    else
+      warning = _("No OpenCPN IDX or selected TCD sources are available.");
+    wxLogWarning(warning);
   } else {
     wxLogMessage(wxString::Format(
         _("Loaded %u Tide/Current data source(s) from:  "),
@@ -306,6 +344,7 @@ otcurrentUIDialog::~otcurrentUIDialog() {
     pConf->Write(_T ( "otcurrentUseFillColour" ), m_bUseFillColour);
     pConf->Write("otcurrentArrowScale", m_arrow_scale);
     pConf->Write(_T("otcurrentTcdFiles"), m_TcdSelectionSetting);
+    pConf->Write(_T("otcurrentSourceMode"), m_SourceMode);
 
     pConf->Write(_T("VColour0"), myVColour[0]);
     pConf->Write(_T("VColour1"), myVColour[1]);
@@ -437,7 +476,7 @@ void otcurrentUIDialog::OnSelectData(wxCommandEvent& event) {
         this,
         _("Select one or more TCD files. Avoid overlapping regions unless "
           "duplicate arrows are intended."),
-        _("otcurrent_LTC_V.2.2 - TCD files"), tcd_files);
+        _("otcurrent_LTC_V.2.6_R - TCD files"), tcd_files);
 
     wxArrayInt current_selections;
     for (unsigned int i = 0; i < tcd_files.GetCount(); i++) {
@@ -462,9 +501,28 @@ void otcurrentUIDialog::OnSelectData(wxCommandEvent& event) {
   } else {
     m_TcdSelectionSetting = _T("!");
     wxMessageBox(
-        _("No TCD files were found in the selected directory. An optional "
-          "HARMONIC.IDX file will still be loaded when present."),
-        _("otcurrent_LTC_V.2.2"), wxOK | wxICON_INFORMATION, this);
+        _("No TCD files were found in the selected directory. Switch to "
+          "OpenCPN IDX mode to use the IDX sources configured in OpenCPN."),
+        _("otcurrent_LTC_V.2.6_R"), wxOK | wxICON_INFORMATION, this);
+  }
+
+  LoadTCMFile();
+  LoadHarmonics();
+  RequestRefresh(pParent);
+}
+
+void otcurrentUIDialog::OnSourceMode(wxCommandEvent& event) {
+  m_SourceMode = m_sourceModeChoice->GetSelection();
+  if (m_SourceMode < 0 || m_SourceMode > 2) m_SourceMode = 0;
+  const bool tcd_mode = m_SourceMode != 0;
+  m_dirPicker1->Enable(tcd_mode);
+  m_button2->Enable(tcd_mode);
+
+  wxFileConfig* config = GetOCPNConfigObject();
+  if (config) {
+    config->SetPath(_T("/PlugIns/otcurrent_ltc_pi"));
+    config->Write(_T("otcurrentSourceMode"), m_SourceMode);
+    config->Flush();
   }
 
   LoadTCMFile();

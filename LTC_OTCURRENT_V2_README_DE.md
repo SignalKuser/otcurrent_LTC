@@ -1,11 +1,18 @@
-# otcurrent v2.0 – LTC-Erweiterung
+# otcurrent_LTC v2.5
 
 Dieser Quellstand basiert auf `otcurrent_pi` und erweitert die Auswahl der
 Tiden-/Strömungsdaten.
 
 ## Bedienung
 
-Im otcurrent-Fenster gibt es nur **einen** Datenordner:
+IDX/HARMONIC-Paare werden wie gewohnt in OpenCPN unter **Optionen →
+Seekarten → Tiden und Strömungen** eingetragen. Version 2.5 übernimmt alle
+dort konfigurierten, vorhandenen `.idx`-Dateien automatisch – auch mehrere
+frei benannte Paare gleichzeitig.
+
+Im otcurrent-Fenster kann direkt zwischen drei Betriebsarten umgeschaltet
+werden: **OpenCPN IDX**, **ausgewählte TCD-Dateien** oder **IDX + TCD
+gleichzeitig**. Für TCD-Dateien gibt es **einen** Datenordner:
 
 1. Das schreibgeschützte Feld zeigt den aktiven Ordner.
 2. `Select folder and TCD files...` öffnet zuerst die Ordnerauswahl.
@@ -19,16 +26,15 @@ weil sonst doppelte Stationen und Pfeile entstehen können.
 Alle Dateinamen mit der Endung `.tcd` werden unterstützt. Der frühere feste
 Name `harmonics-dwf-20210110-free.tcd` ist nicht mehr erforderlich.
 
-Eine im selben Ordner vorhandene `HARMONIC.IDX` wird zusätzlich als
-Legacy-Datensatz geladen.
-
 ## Abgrenzung zu OpenCPN
 
-`OpenCPN > Optionen > Seekarten > Tiden + Strömungen` ist eine eigene
-OpenCPN-Datenquellenliste. Sie ist nicht die zweite Ordnerauswahl von
-otcurrent und steuert nicht die großen otcurrent-Pfeile.
+`OpenCPN > Optionen > Seekarten > Tiden + Strömungen` ist die zentrale
+IDX-Datenquellenliste. Die dort eingetragenen IDX-Dateien steuern in Version
+2.5 auch die großen otcurrent-Pfeile, wenn der IDX- oder Kombinationsmodus
+aktiv ist.
 
 ## Build-Status
 
-Der Quellstand `otcurrent_LTC_V.2.2` wurde unter Windows für OpenCPN
-erfolgreich kompiliert und praktisch getestet.
+Der Quellstand ist vorbereitet, aber auf diesem Rechner noch nicht
+kompiliert. Es fehlen derzeit eine vollständige C++-/CMake-Buildumgebung und
+die Inhalte des Git-Submoduls `opencpn-libs`.

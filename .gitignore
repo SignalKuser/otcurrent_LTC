@@ -1,0 +1,11 @@
+﻿build/
+buildwin/
+build-vs2026/
+cache/
+wxWidgetsDev.7z
+wxWidgetsDLL.7z
+wxWidgetsHeaders.7z
+*.bak
+*.tmp
+*.log
+before-v*/

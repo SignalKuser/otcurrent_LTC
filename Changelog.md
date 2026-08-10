@@ -212,6 +212,28 @@ Closes: #593
   18.08 is available, will be removed in next release.
 * git-push key files default location is moved from ci/ to build-deps/.
 * A new script update-templates supporting templates update is added.
+## otcurrent_LTC_V.2.5
+
+- Prevent saved window sizes from older versions from clipping the TCD
+  multi-selection, Preferences, and Help controls.
+- Preserve the complete v2.2 interface while retaining all v2.4 source modes.
+
+## otcurrent_LTC_V.2.4
+
+- Added a direct source selector for OpenCPN IDX, selected TCD files, or both
+  source types simultaneously.
+- Kept TCD multi-selection and reload the current display immediately.
+
+## otcurrent_LTC_V.2.3
+
+- Load every existing `.idx`/`.IDX` source registered by OpenCPN under
+  `[TideCurrentDataSources]`.
+- Support multiple arbitrarily named OpenCPN IDX/HARMONIC pairs at once.
+- Keep the plugin dialog focused on selecting optional additional `.tcd`
+  files and suppress duplicate data-source paths.
+- Retain legacy automatic `HARMONIC.IDX` loading from the selected plugin
+  folder for backward compatibility.
+
 ## otcurrent_LTC_V.2.2
 
 - Correct the OpenCPN package identity and bump the version so cached 2.1

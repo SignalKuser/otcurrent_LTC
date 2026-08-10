@@ -81,6 +81,22 @@ otcurrentUIDialogBase::otcurrentUIDialogBase(wxWindow* parent, wxWindowID id,
       new wxStaticBox(this, wxID_ANY, _("Tide/Current data source")),
       wxVERTICAL);
 
+  wxBoxSizer* sourceModeSizer = new wxBoxSizer(wxHORIZONTAL);
+  wxStaticText* sourceModeLabel =
+      new wxStaticText(sbSizerFolder->GetStaticBox(), wxID_ANY,
+                       _("Source mode"));
+  sourceModeSizer->Add(sourceModeLabel, 0,
+                       wxALIGN_CENTER_VERTICAL | wxALL, 5);
+  wxString sourceModeChoices[] = {_("OpenCPN IDX sources"),
+                                  _("Selected TCD files"),
+                                  _("OpenCPN IDX + selected TCD")};
+  m_sourceModeChoice = new wxChoice(
+      sbSizerFolder->GetStaticBox(), wxID_ANY, wxDefaultPosition,
+      wxDefaultSize, WXSIZEOF(sourceModeChoices), sourceModeChoices, 0);
+  m_sourceModeChoice->SetSelection(0);
+  sourceModeSizer->Add(m_sourceModeChoice, 1, wxALL | wxEXPAND, 5);
+  sbSizerFolder->Add(sourceModeSizer, 0, wxEXPAND, 5);
+
   m_dirPicker1 =
       new wxTextCtrl(sbSizerFolder->GetStaticBox(), wxID_ANY, wxEmptyString,
                      wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
@@ -116,6 +132,9 @@ otcurrentUIDialogBase::otcurrentUIDialogBase(wxWindow* parent, wxWindowID id,
   this->SetSizer(bSizerMain);
   this->Layout();
   bSizerMain->Fit(this);
+  // A size saved by an older plugin version must never clip controls added
+  // by a newer version.
+  this->SetMinSize(this->GetBestSize());
 
   this->Centre(wxBOTH);
 
@@ -138,6 +157,9 @@ otcurrentUIDialogBase::otcurrentUIDialogBase(wxWindow* parent, wxWindowID id,
   m_button2->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                      wxCommandEventHandler(otcurrentUIDialogBase::OnSelectData),
                      NULL, this);
+  m_sourceModeChoice->Connect(
+      wxEVT_COMMAND_CHOICE_SELECTED,
+      wxCommandEventHandler(otcurrentUIDialogBase::OnSourceMode), NULL, this);
   m_button1->Connect(wxEVT_COMMAND_BUTTON_CLICKED,
                      wxCommandEventHandler(otcurrentUIDialogBase::About), NULL,
                      this);
@@ -167,6 +189,9 @@ otcurrentUIDialogBase::~otcurrentUIDialogBase() {
   m_button2->Disconnect(
       wxEVT_COMMAND_BUTTON_CLICKED,
       wxCommandEventHandler(otcurrentUIDialogBase::OnSelectData), NULL, this);
+  m_sourceModeChoice->Disconnect(
+      wxEVT_COMMAND_CHOICE_SELECTED,
+      wxCommandEventHandler(otcurrentUIDialogBase::OnSourceMode), NULL, this);
   m_button1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED,
                         wxCommandEventHandler(otcurrentUIDialogBase::About),
                         NULL, this);
@@ -179,8 +204,6 @@ otcurrentPreferencesDialogBase::otcurrentPreferencesDialogBase(
     wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
     const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style) {
-  this->SetSizeHints(wxSize(400, 400), wxDefaultSize);
-
   wxBoxSizer* bSizerMain;
   bSizerMain = new wxBoxSizer(wxVERTICAL);
 
@@ -308,16 +331,8 @@ otcurrentPreferencesDialogBase::otcurrentPreferencesDialogBase(
 
   bSizer4->Add(sbSizer5, 1, wxALL | wxEXPAND, 5);
 
-  bSizerMain->Add(bSizer4, 1, wxEXPAND, 5);
+  bSizerMain->Add(bSizer4, 0, wxEXPAND, 5);
 
-  m_sdbSizerButtons = new wxStdDialogButtonSizer();
-  m_sdbSizerButtonsOK = new wxButton(this, wxID_OK);
-  m_sdbSizerButtons->AddButton(m_sdbSizerButtonsOK);
-  m_sdbSizerButtonsCancel = new wxButton(this, wxID_CANCEL);
-  m_sdbSizerButtons->AddButton(m_sdbSizerButtonsCancel);
-  m_sdbSizerButtons->Realize();
-
-  bSizerMain->Add(m_sdbSizerButtons, 0, wxALL | wxEXPAND, 5);
 
   wxStaticBoxSizer* sbSizerScale;
   sbSizerScale = new wxStaticBoxSizer(
@@ -335,7 +350,8 @@ otcurrentPreferencesDialogBase::otcurrentPreferencesDialogBase(
   sbSizerIconsFactor->Add(m_sIconSizeFactor, 0, wxEXPAND, 5);
   sbSizerIconsFactor->Add(0, 0, wxEXPAND, 5);
 
-  sbSizerScale->Add(sbSizerIconsFactor, 0, wxEXPAND, 5);
+  m_sIconSizeFactor->SetMinSize(wxSize(220, -1));
+  sbSizerScale->Add(sbSizerIconsFactor, 1, wxALL | wxEXPAND, 5);
 
   wxStaticBoxSizer* sbSizerFontFactor;
   sbSizerFontFactor =
@@ -348,12 +364,21 @@ otcurrentPreferencesDialogBase::otcurrentPreferencesDialogBase(
                                    wxSL_BOTTOM | wxSL_HORIZONTAL | wxSL_LABELS);
   sbSizerFontFactor->Add(m_sFontSizeFactor, 0, wxEXPAND, 5);
 
-  sbSizerScale->Add(sbSizerFontFactor, 0, wxEXPAND, 5);
+  m_sFontSizeFactor->SetMinSize(wxSize(220, -1));
+  sbSizerScale->Add(sbSizerFontFactor, 1, wxALL | wxEXPAND, 5);
 
-  bSizerMain->Add(sbSizerScale, 0, wxEXPAND, 5);
+  bSizerMain->Add(sbSizerScale, 0, wxALL | wxEXPAND, 5);
 
-  this->SetSizer(bSizerMain);
-  this->Layout();
+  m_sdbSizerButtons = new wxStdDialogButtonSizer();
+  m_sdbSizerButtonsOK = new wxButton(this, wxID_OK);
+  m_sdbSizerButtons->AddButton(m_sdbSizerButtonsOK);
+  m_sdbSizerButtonsCancel = new wxButton(this, wxID_CANCEL);
+  m_sdbSizerButtons->AddButton(m_sdbSizerButtonsCancel);
+  m_sdbSizerButtons->Realize();
+  bSizerMain->Add(m_sdbSizerButtons, 0, wxALL | wxEXPAND, 5);
+
+  this->SetSizerAndFit(bSizerMain);
+  this->SetMinSize(this->GetBestSize());
 
   this->Centre(wxBOTH);
 

@@ -32,23 +32,23 @@ set(OCPN_RELEASE_REPO
 # -------  Plugin setup --------
 #
 set(PKG_NAME otcurrent_ltc_pi)
-set(PKG_VERSION  2.2.0)
+set(PKG_VERSION  2.6.0)
 set(PKG_PRERELEASE "")  # Empty, or a tag like 'beta'
 
-set(DISPLAY_NAME "otcurrent_LTC_V.2.2")  # Dialogs, installer artifacts, ...
+set(DISPLAY_NAME "otcurrent_LTC_V.2.6_R")  # Raspberry Pi ARM64 edition
 # OpenCPN requires the catalog/XML name to match GetCommonName() exactly.
 # A different value makes an imported plugin disappear after disabling it.
-set(PLUGIN_API_NAME "otcurrent_LTC_V.2.2")
-set(PKG_SUMMARY "Tidal-current predictions from arbitrary TCD filenames")
+set(PLUGIN_API_NAME "otcurrent_LTC_V.2.6_R")
+set(PKG_SUMMARY "Tidal-current predictions from OpenCPN IDX and TCD sources")
 set(PKG_DESCRIPTION [=[
-otcurrent_LTC_V.2.2. Allows predictions of future tidal currents and loads
-all TCD files from the selected data directory, independent of filename.
+otcurrent_LTC_V.2.6_R. Displays IDX sources configured in OpenCPN, selected TCD
+files, or both source types simultaneously for tidal-current predictions.
 ]=])
 
 set(PKG_AUTHOR "Mike Rossiter")
 set(PKG_IS_OPEN_SOURCE "yes")
-set(PKG_HOMEPAGE https://github.com/Rasbats/otcurrent_pi)
-set(PKG_INFO_URL https://opencpn.org/OpenCPN/plugins/otcurrent.html)
+set(PKG_HOMEPAGE "https://github.com/SignalKuser?tab=repositories")
+set(PKG_INFO_URL "https://github.com/SignalKuser?tab=repositories")
 
 set(SRC
         src/otcurrent_pi.h

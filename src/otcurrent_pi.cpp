@@ -85,9 +85,9 @@ otcurrent_pi::otcurrent_pi(void *ppimgr) : opencpn_plugin_118(ppimgr) {
 
   m_bShowotcurrent = false;
 
-
+  
   g_pi = this;
-
+  
 }
 
 
@@ -185,7 +185,7 @@ const char* otcurrent_pi::GetPlugInVersionBuild() { return PKG_BUILD_INFO; }
 wxBitmap *otcurrent_pi::GetPlugInBitmap() { return &m_panel_bitmap; }
 
 wxString otcurrent_pi::GetCommonName() {
-  return _T("otcurrent_LTC_V.2.2");
+  return _T("otcurrent_LTC_V.2.6_R");
 }
 
 wxString otcurrent_pi::GetShortDescription() { return PKG_SUMMARY; }
@@ -204,6 +204,10 @@ void otcurrent_pi::ShowPreferencesDialog(wxWindow *parent) {
   Pref->m_cbUseHighRes->SetValue(m_bCopyUseHighRes);
   Pref->m_cbFillColour->SetValue(m_botcurrentUseHiDef);
   Pref->m_cScale->SetSelection(m_CopyArrowScale);
+
+  Pref->GetSizer()->SetSizeHints(Pref);
+  Pref->Fit();
+  Pref->CentreOnParent();
 
   wxColour myC0 = wxColour(myVColour[0]);
   Pref->myColourPicker0->SetColour(myC0);
@@ -318,6 +322,9 @@ void otcurrent_pi::OnToolbarToolCallback(int id) {
     m_potcurrentDialog = new otcurrentUIDialog(m_parent_window, this);
     wxPoint p = wxPoint(m_otcurrent_dialog_x, m_otcurrent_dialog_y);
     m_potcurrentDialog->Move(p);
+    const wxSize bestSize = m_potcurrentDialog->GetBestSize();
+    m_otcurrent_dialog_sx = wxMax(m_otcurrent_dialog_sx, bestSize.GetWidth());
+    m_otcurrent_dialog_sy = wxMax(m_otcurrent_dialog_sy, bestSize.GetHeight());
     m_potcurrentDialog->SetSize(m_otcurrent_dialog_sx, m_otcurrent_dialog_sy);
 
     // Create the drawing factory
@@ -352,6 +359,9 @@ m_pfrcurrentsDialog->m_staticText211->SetFont(f);         \
   if (m_bShowotcurrent) {
     m_potcurrentDialog->SetScaledBitmaps(scalefactor);
     m_potcurrentDialog->Move(m_otcurrent_dialog_x, m_otcurrent_dialog_y);
+    const wxSize bestSize = m_potcurrentDialog->GetBestSize();
+    m_otcurrent_dialog_sx = wxMax(m_otcurrent_dialog_sx, bestSize.GetWidth());
+    m_otcurrent_dialog_sy = wxMax(m_otcurrent_dialog_sy, bestSize.GetHeight());
     m_potcurrentDialog->SetSize(m_otcurrent_dialog_sx, m_otcurrent_dialog_sy);
     m_potcurrentDialog->Show();
   } else {

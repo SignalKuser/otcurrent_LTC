@@ -48,7 +48,7 @@ if errorlevel 1 (
   exit /b %errorlevel%
 )
 
-echo [4/4] otcurrent_LTC_V.2.2 kompilieren und Plugin-Paket bauen ...
+echo [4/4] otcurrent_LTC_V.2.5 kompilieren und Plugin-Paket bauen ...
 "%CMAKE%" --build "%BUILD%" --config RelWithDebInfo --target tarball
 if errorlevel 1 (
   echo FEHLER: Build fehlgeschlagen.
@@ -56,7 +56,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo otcurrent_LTC_V.2.2 wurde erfolgreich gebaut.
+echo otcurrent_LTC_V.2.5 wurde erfolgreich gebaut.
 echo Erzeugte Pakete:
 dir /b "%BUILD%\*.tar.gz" 2>nul
 dir /b "%BUILD%\*.zip" 2>nul
