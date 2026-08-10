@@ -1,5 +1,5 @@
 
-# otcurrent_LTC_V.2.20
+# otcurrent_LTC_V.2.20 (win32)
 modified opencpn plugin  (multiselect / all filenames)
 -
 this plugin based on "otcurrent v.4.6.5" from Mike Rossiter find here:
@@ -34,12 +34,14 @@ Some additional functions will be available shortly.
 
 <img width="1880" height="983" alt="nordsee" src="https://github.com/user-attachments/assets/75fe95a0-d8d5-4095-81b4-15bfac0c3ee1" />
 
-# otcurrent_LTC_V.2.5
+# otcurrent_LTC_V.2.5 (win32)
 can now handle IDX, tcd or both.
 -
 
 <img width="1897" height="919" alt="Screenshot 2026-08-09 172107" src="https://github.com/user-attachments/assets/24487eff-0422-4e30-b737-b9a8ed5777e3" />
 
+# otcurrent_LTC_V.2.6_R (ARM64/Raspberry) 
+<img width="1281" height="720" alt="Screenshot 2026-08-10 213751" src="https://github.com/user-attachments/assets/5097789b-af92-49f9-9302-934050bccf68" />
 
 License
 -------
