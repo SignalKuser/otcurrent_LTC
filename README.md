@@ -39,9 +39,9 @@ can now handle IDX, tcd or both.
 -
 
 <img width="1897" height="919" alt="Screenshot 2026-08-09 172107" src="https://github.com/user-attachments/assets/24487eff-0422-4e30-b737-b9a8ed5777e3" />
-.
-.
+
 # otcurrent_LTC_V.2.6_R (ARM64/Raspberry) 
+
 <img width="1278" height="694" alt="Screenshot 2026-08-10 214204" src="https://github.com/user-attachments/assets/0ba5d152-bbb4-44fe-93c3-5fa98e3bb461" />
 
 License
